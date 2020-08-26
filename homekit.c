@@ -85,76 +85,76 @@ homekit_server_config_t homekit_server_config = {
 
 
 homekit_value_t current_relative_humidity_get(){
-  cha_humidity.value.float_value = callbacks.current_relative_humidity_get();
-  return cha_humidity.value;
+    cha_humidity.value.float_value = callbacks.current_relative_humidity_get();
+    return cha_humidity.value;
 }
 
 void current_relative_humidity_update(float humidity){
-  cha_humidity.value.float_value = humidity;
-  homekit_characteristic_notify(&cha_humidity, cha_humidity.value);
+    cha_humidity.value.float_value = humidity;
+    homekit_characteristic_notify(&cha_humidity, cha_humidity.value);
 }
 
 homekit_value_t current_temperature_get(){
-  cha_temperature.value.float_value = callbacks.current_temperature_get();
-  return cha_temperature.value;
+    cha_temperature.value.float_value = callbacks.current_temperature_get();
+    return cha_temperature.value;
 }
 
 void current_temperature_update(float temperature){
-  cha_temperature.value.float_value = temperature;
-  homekit_characteristic_notify(&cha_temperature, cha_temperature.value);
+    cha_temperature.value.float_value = temperature;
+    homekit_characteristic_notify(&cha_temperature, cha_temperature.value);
 }
   
 homekit_value_t target_door_state_get(){
-  cha_target_door_state.value.uint8_value = callbacks.target_door_state_get();
-  return cha_target_door_state.value;
+    cha_target_door_state.value.uint8_value = callbacks.target_door_state_get();
+    return cha_target_door_state.value;
 }
 
 void target_door_state_update(uint8_t state){
-  cha_target_door_state.value.uint8_value = state;
-  homekit_characteristic_notify(&cha_target_door_state, cha_target_door_state.value);
+    cha_target_door_state.value.uint8_value = state;
+    homekit_characteristic_notify(&cha_target_door_state, cha_target_door_state.value);
 }
 
 void target_door_state_set(homekit_value_t value){
-  callbacks.target_door_state_set(value);
+    callbacks.target_door_state_set(value.uint8_value);
 }
 
 homekit_value_t current_door_state_get(){
-  cha_current_door_state.value.uint8_value = callbacks.current_door_state_get();
-  return cha_current_door_state.value;
+    cha_current_door_state.value.uint8_value = callbacks.current_door_state_get();
+    return cha_current_door_state.value;
 }
 
 void current_door_state_update(uint8_t state){
-  cha_current_door_state.value.uint8_value = state;
-  homekit_characteristic_notify(&cha_current_door_state, cha_current_door_state.value);
+    cha_current_door_state.value.uint8_value = state;
+    homekit_characteristic_notify(&cha_current_door_state, cha_current_door_state.value);
 }
 
 homekit_value_t obstruction_detected_get(){
-  cha_obstruction_detected.value.bool_value = callbacks.obstruction_detected_get();
-  return cha_obstruction_detected.value;
+    cha_obstruction_detected.value.bool_value = callbacks.obstruction_detected_get();
+    return cha_obstruction_detected.value;
 }
 
 void obstruction_detected_update(bool state){
-  cha_obstruction_detected.value.bool_value = state;
-  homekit_characteristic_notify(&cha_obstruction_detected, cha_obstruction_detected.value);
+    cha_obstruction_detected.value.bool_value = state;
+    homekit_characteristic_notify(&cha_obstruction_detected, cha_obstruction_detected.value);
 }
 
 void identify(homekit_value_t _value) {
     // nothing to do
 }
   
-void init_homekit( float (*current_relative_humidity_get)(),
+void init_homekit(float (*current_relative_humidity_get)(),
                   float (*current_temperature_get)(),
                   uint8_t (*target_door_state_get)(),
-                  void (*target_door_state_set)(homekit_value_t value),
+                  void (*target_door_state_set)(uint8_t value),
                   uint8_t (*current_door_state_get)(),
                   bool (*obstruction_detected_get)()) {
                     
-  callbacks.current_relative_humidity_get = current_relative_humidity_get;
-  callbacks.current_temperature_get = current_temperature_get;
-  callbacks.target_door_state_get = target_door_state_get;
-  callbacks.target_door_state_set = target_door_state_set;
-  callbacks.current_door_state_get = current_door_state_get;
-  callbacks.obstruction_detected_get = obstruction_detected_get;
+    callbacks.current_relative_humidity_get = current_relative_humidity_get;
+    callbacks.current_temperature_get = current_temperature_get;
+    callbacks.target_door_state_get = target_door_state_get;
+    callbacks.target_door_state_set = target_door_state_set;
+    callbacks.current_door_state_get = current_door_state_get;
+    callbacks.obstruction_detected_get = obstruction_detected_get;
 
-  arduino_homekit_setup(&homekit_server_config);
+    arduino_homekit_setup(&homekit_server_config);
 }

@@ -81,15 +81,6 @@ void setup() {
   );
 }
 
-int digitalReadOutputPin(uint8_t pin) {
- uint8_t bit = digitalPinToBitMask(pin);
- uint8_t port = digitalPinToPort(pin);
- if (port == NOT_A_PIN) 
-   return LOW;
-
- return (*portOutputRegister(port) & bit) ? HIGH : LOW;
-}
-
 void loop() {
 	arduino_homekit_loop();
 
@@ -148,15 +139,15 @@ void trigger_actuator(){
   digitalWrite(ACTUATOR_PIN, HIGH);
 }
 
-void target_door_state_set(homekit_value_t value){
+void target_door_state_set(uint8_t value){
   uint8_t current_door_state = current_door_state_get();
-  if( current_door_state == value.uint8_value){
+  if( current_door_state == value){
     Debug.print(DBG_VERBOSE, "Door is already in target state %d (nothing to do)", current_door_state); 
   } else {
     target_door_state_changed = true;
     target_door_state_changed_timestamp = millis();
-    Debug.print(DBG_VERBOSE, "Set target door state to %d", value.uint8_value); 
-    target_door_state = value.uint8_value;  
+    Debug.print(DBG_VERBOSE, "Set target door state to %d", value); 
+    target_door_state = value;  
     trigger_actuator();
   }
 }
