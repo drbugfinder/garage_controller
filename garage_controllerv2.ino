@@ -26,10 +26,11 @@ extern "C" {
 void ICACHE_RAM_ATTR on_contact_sensor_change();
 
 DHT dht(DHT_PIN, DHT_TYPE);
-volatile bool contact_sensor_changed = false;
+volatile bool current_door_state_changed = false;
 volatile bool target_door_state_changed = false;
 volatile long target_door_state_changed_timestamp = 0;
-uint8_t target_door_state;
+volatile uint8_t target_door_state;
+static uint32_t next_report_ms = 0;
 
 void init_debug() {
   Serial.begin(DEBUG_PORT);
@@ -53,11 +54,12 @@ void init_dht(){
 }
 
 void on_contact_sensor_change(){
-  contact_sensor_changed = true;
+  current_door_state_changed = true;
 }
 
 void init_contact_sensor(){
   pinMode(CONTACT_SENSOR_PIN, INPUT);
+  target_door_state = current_door_state_get();
   attachInterrupt(digitalPinToInterrupt(CONTACT_SENSOR_PIN), on_contact_sensor_change, CHANGE);
 }
 
@@ -72,6 +74,7 @@ void setup() {
   init_dht();
   init_contact_sensor();
   init_actuator();
+
   init_homekit(&current_relative_humidity_get,
                &current_temperature_get,
                &target_door_state_get,
@@ -85,25 +88,43 @@ void loop() {
 	arduino_homekit_loop();
 
   uint8_t current_door_state = current_door_state_get();
+  const uint32_t timestamp = millis();
   
   if(current_door_state != target_door_state && target_door_state_changed_timestamp + ACTUATOR_TIMEOUT_MS < millis() ){
     Debug.print(DBG_ERROR, "Defaulting target door state to current door state due to inativity after %d msecs", millis() - target_door_state_changed_timestamp); 
+    target_door_state = current_door_state;
     target_door_state_changed = true;
-    target_door_state = current_door_state;
   }
   
-  if(contact_sensor_changed){
-    contact_sensor_changed = false;
+  if(current_door_state_changed){
+    Debug.print(DBG_VERBOSE, "Current door state %d", current_door_state); 
+    target_door_state = current_door_state;
+    target_door_state_changed = true;
+  }
+
+  if (timestamp > next_report_ms) {
+    // report sensor values every 5 seconds
+    next_report_ms = timestamp + 5 * 1000;
+
     current_door_state_update(current_door_state);
+    current_door_state_changed = false;
     
-    target_door_state_changed = false;
-    target_door_state = current_door_state;
     target_door_state_update(target_door_state_get());
-  }
+    target_door_state_changed = false;
+    
+    current_temperature_update(current_temperature_get());
+    current_relative_humidity_update(current_relative_humidity_get());
+    obstruction_detected_update(obstruction_detected_get());
+  } else {
+    if(current_door_state_changed){
+      current_door_state_update(current_door_state);
+      current_door_state_changed = false;
+    }
   
-  if(target_door_state_changed){
-    target_door_state_changed = false;
-    target_door_state_update(target_door_state_get());
+    if(target_door_state_changed){
+      target_door_state_update(target_door_state_get());
+      target_door_state_changed = false;
+    } 
   }
 
   delay(50);
@@ -140,21 +161,16 @@ void trigger_actuator(){
 }
 
 void target_door_state_set(uint8_t value){
-  uint8_t current_door_state = current_door_state_get();
-  if( current_door_state == value){
-    Debug.print(DBG_VERBOSE, "Door is already in target state %d (nothing to do)", current_door_state); 
-  } else {
-    target_door_state_changed = true;
-    target_door_state_changed_timestamp = millis();
-    Debug.print(DBG_VERBOSE, "Set target door state to %d", value); 
-    target_door_state = value;  
-    trigger_actuator();
-  }
+  Debug.print(DBG_VERBOSE, "Set target door state to %d", value); 
+  target_door_state_changed_timestamp = millis();
+  target_door_state_changed = true;
+  target_door_state = value;  
+  trigger_actuator();
 }
 
 uint8_t current_door_state_get(){
   uint8_t contact = (1 + digitalRead(CONTACT_SENSOR_PIN)) % 2;
-
+  Debug.print(DBG_VERBOSE, "Current door state %d", contact); 
   return contact;
 }
 

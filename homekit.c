@@ -89,8 +89,8 @@ homekit_value_t current_relative_humidity_get(){
     return cha_humidity.value;
 }
 
-void current_relative_humidity_update(float humidity){
-    cha_humidity.value.float_value = humidity;
+void current_relative_humidity_update(float value){
+    cha_humidity.value.float_value = value;
     homekit_characteristic_notify(&cha_humidity, cha_humidity.value);
 }
 
@@ -99,8 +99,8 @@ homekit_value_t current_temperature_get(){
     return cha_temperature.value;
 }
 
-void current_temperature_update(float temperature){
-    cha_temperature.value.float_value = temperature;
+void current_temperature_update(float value){
+    cha_temperature.value.float_value = value;
     homekit_characteristic_notify(&cha_temperature, cha_temperature.value);
 }
   
@@ -109,8 +109,8 @@ homekit_value_t target_door_state_get(){
     return cha_target_door_state.value;
 }
 
-void target_door_state_update(uint8_t state){
-    cha_target_door_state.value.uint8_value = state;
+void target_door_state_update(uint8_t value){
+    cha_target_door_state.value.uint8_value = value;
     homekit_characteristic_notify(&cha_target_door_state, cha_target_door_state.value);
 }
 
@@ -123,8 +123,8 @@ homekit_value_t current_door_state_get(){
     return cha_current_door_state.value;
 }
 
-void current_door_state_update(uint8_t state){
-    cha_current_door_state.value.uint8_value = state;
+void current_door_state_update(uint8_t value){
+    cha_current_door_state.value.uint8_value = value;
     homekit_characteristic_notify(&cha_current_door_state, cha_current_door_state.value);
 }
 
