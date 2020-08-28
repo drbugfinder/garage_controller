@@ -46,7 +46,7 @@ homekit_characteristic_t cha_obstruction_detected = HOMEKIT_CHARACTERISTIC_(
 );
 
 homekit_accessory_t *homekit_accessories[] = {
-    HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_sensor, .services=(homekit_service_t*[]) {
+    HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_garage, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Garage Controller"),
             HOMEKIT_CHARACTERISTIC(MANUFACTURER, "Arduino HomeKit"),
