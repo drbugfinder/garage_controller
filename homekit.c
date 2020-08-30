@@ -57,12 +57,12 @@ homekit_accessory_t *homekit_accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(TEMPERATURE_SENSOR, .characteristics=(homekit_characteristic_t*[]) {
-            HOMEKIT_CHARACTERISTIC(NAME, "Temperature Sensor"),
+            HOMEKIT_CHARACTERISTIC(NAME, "Temperature"),
             &cha_temperature,
             NULL
         }),  
         HOMEKIT_SERVICE(HUMIDITY_SENSOR, .characteristics=(homekit_characteristic_t*[]) {
-            HOMEKIT_CHARACTERISTIC(NAME, "Humidity Sensor"),
+            HOMEKIT_CHARACTERISTIC(NAME, "Humidity"),
             &cha_humidity,
             NULL
         }),
