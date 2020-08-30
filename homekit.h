@@ -9,7 +9,7 @@ typedef struct _callbacks {
     bool (*obstruction_detected_get)();
 } CALLBACKS;
 
-void init_homekit( float (*current_relative_humidity_get)(),
+void init_homekit(float (*current_relative_humidity_get)(),
                   float (*current_temperature_get)(),
                   uint8_t (*target_door_state_get)(),
                   void (*target_door_state_set)(uint8_t value),
